@@ -1,6 +1,7 @@
-# dev_connect
+# Dev Connect
+## Lets Code Together
 
-A new Flutter project.
+Dev connect is a developer community in which we use machine learning to connect developer and Project owners based on user information.
 
 ## Getting Started
 
