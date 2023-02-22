@@ -4,7 +4,7 @@ import 'package:dev_connect/Model/LoginModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-class LoginService {
+class AuthService {
   Future<LoginModel?> loginUser(String email, String password) async {
     var client = http.Client();
 

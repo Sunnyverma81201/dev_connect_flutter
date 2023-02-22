@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +17,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -24,11 +27,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   var _isLoggedIn = true;
 
-  loginUser(String email, String password) async {
-    var loginResponse = await LoginService().loginUser(email, password);
+  Future<void> loginUser(String email, String password) async {
+    final SharedPreferences prefs = await _prefs;
+    // Obtain shared preferences.
+    var loginResponse = await AuthService().loginUser(email, password);
 
     if (loginResponse != Null) {
-      print(loginResponse!.email);
+      await prefs.setString('firstName', loginResponse!.firstName);
+      await prefs.setString('lastName', loginResponse.lastName);
+      await prefs.setString('email', loginResponse.email);
+      await prefs.setString('accessToken', loginResponse.token);
+      await prefs.setString('location', loginResponse.location);
+      await prefs.setString('lastName', loginResponse.profileImg!);
+      await prefs.setBool('isLoggedIn', true);
+
       _isLoggedIn = true;
     }
   }
