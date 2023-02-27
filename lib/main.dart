@@ -9,12 +9,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool? isLoggedIn = prefs.getBool('isLoggedIn');
-  print(isLoggedIn);
+  String? _token = prefs.getString('token');
+
   runApp(MaterialApp(
     title: "Dev Connect",
     theme: ThemeData.light(useMaterial3: true),
     darkTheme: ThemeData.dark(useMaterial3: true),
-    home: isLoggedIn! ? TabsScreen() : OnboardingScreen(),
+    home: _token != null ? const TabsScreen() : const OnboardingScreen(),
   ));
 }

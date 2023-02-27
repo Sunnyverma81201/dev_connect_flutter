@@ -1,8 +1,9 @@
+import 'dart:developer';
 import 'dart:ffi';
-import 'package:dev_connect/Model/LoginModel.dart';
+import 'package:dev_connect/Model/UserModel.dart';
 import 'package:dev_connect/Screens/AuthenticationScreens/SignupScreen.dart';
 import 'package:dev_connect/Screens/TabScreens/TabsScreen.dart';
-import 'package:dev_connect/Services/loginService.dart';
+import 'package:dev_connect/Services/AuthServices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:email_validator/email_validator.dart';
@@ -27,19 +28,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   var _isLoggedIn = true;
 
+// MARK: Function to call login API and save user data to storage on successful login
   Future<void> loginUser(String email, String password) async {
     final SharedPreferences prefs = await _prefs;
     // Obtain shared preferences.
     var loginResponse = await AuthService().loginUser(email, password);
 
-    if (loginResponse != Null) {
-      await prefs.setString('firstName', loginResponse!.firstName);
+    if (loginResponse != null) {
+      // Saving User Data to local storage
+      await prefs.setString('firstName', loginResponse.firstName);
       await prefs.setString('lastName', loginResponse.lastName);
       await prefs.setString('email', loginResponse.email);
-      await prefs.setString('accessToken', loginResponse.token);
-      await prefs.setString('location', loginResponse.location);
-      await prefs.setString('lastName', loginResponse.profileImg!);
-      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('token', loginResponse.token!);
 
       _isLoggedIn = true;
     }
@@ -94,21 +94,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextButton(
-                    onPressed: () async {
-                      setState(() {
-                        _isLoggedIn = false;
-                      });
-                      await loginUser(emailController.text.toString(),
-                          passwordController.text.toString());
-                      if (_isLoggedIn) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const TabsScreen()));
-                      } else {
-                        print("Login Error");
-                      }
-                    },
+                    onPressed: _validate
+                        ? () async {
+                            setState(() {
+                              _isLoggedIn = false;
+                            });
+
+                            if (emailController.text.isNotEmpty &&
+                                passwordController.text.isNotEmpty) {
+                              await loginUser(emailController.text.toString(),
+                                  passwordController.text.toString());
+                            } else {}
+                            if (_isLoggedIn) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TabsScreen()));
+                            } else {
+                              print("Login Error");
+                            }
+                          }
+                        : null,
                     child: Container(
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -127,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an Account? "),
+                    const Text("Don't have an Account?"),
                     TextButton(
                         onPressed: () {
                           Navigator.push(

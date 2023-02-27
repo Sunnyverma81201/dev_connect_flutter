@@ -3,9 +3,12 @@ import 'package:dev_connect/Screens/TabScreens/FavouriteTabContent/FavouriteTab.
 import 'package:dev_connect/Screens/TabScreens/HomeTabContent/HomeTab.dart';
 import 'package:dev_connect/Screens/TabScreens/ProjectsTabContent/ProjectTab.dart';
 import 'package:dev_connect/Screens/UserAccountScreens/AccountDetailsScreen.dart';
+import 'package:dev_connect/Services/UserServices.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -15,11 +18,48 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   int _selectedIndex = 0;
+
+  // MARK: Function to get user data from the backend based on the access token and store it in the local storage
+  Future<void> getUserData() async {
+    final SharedPreferences prefs = await _prefs;
+
+    var userDataResponse = await UserServices()
+        .getUserData(await prefs.getString('token').toString());
+
+    if (userDataResponse != null) {
+      List<String> intrestList = [];
+      List<String> projectList = [];
+
+      for (var intrest in userDataResponse.interest!) {
+        intrestList.add(intrest.toString());
+      }
+
+      for (var project in userDataResponse.projects!) {
+        projectList.add(project);
+      }
+// user data saved here
+
+      await prefs.setString('firstName', userDataResponse.firstName);
+      await prefs.setString('lastName', userDataResponse.lastName);
+      await prefs.setString('email', userDataResponse.email);
+      await prefs.setString('location', userDataResponse.location ?? "");
+      await prefs.setString('img', userDataResponse.img ?? "");
+      await prefs.setStringList('interests', intrestList);
+      await prefs.setStringList('projects', projectList);
+      await prefs.setString(
+          'tech', const JsonEncoder().convert(userDataResponse.tech));
+      await prefs.setString(
+          'createdAt', userDataResponse.createdAt!.toIso8601String());
+      await prefs.setString(
+          'updatedAt', userDataResponse.updatedAt!.toIso8601String());
+    }
+  }
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
+// List of tabs
   static const List<Widget> _widgetOptions = <Widget>[
     HomeTab(),
     FavouriteTab(),
@@ -31,6 +71,19 @@ class _TabsScreenState extends State<TabsScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<bool> logoutUser() async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.clear();
+  }
+
+  @override
+  void initState() {
+    // this function loads the user data from backend into the localStorage
+    getUserData();
+
+    super.initState();
   }
 
   @override
@@ -115,8 +168,10 @@ class _TabsScreenState extends State<TabsScreen> {
             ),
           ],
           currentIndex: _selectedIndex,
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: Colors.black,
           selectedItemColor: Colors.teal,
+          enableFeedback: true,
+          type: BottomNavigationBarType.fixed,
           onTap: _onItemTapped,
         ),
       ),

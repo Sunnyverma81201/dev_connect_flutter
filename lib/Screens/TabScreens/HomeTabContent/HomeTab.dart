@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:dev_connect/Model/LoginModel.dart';
+import 'package:dev_connect/Model/UserModel.dart';
+import 'package:dev_connect/Screens/AuthenticationScreens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -20,8 +21,14 @@ class _HomeTabState extends State<HomeTab> {
   void _loadData() async {
     SharedPreferences prefs = await _prefs;
     setState(() {
-      _token = prefs.getString('email');
+      _token = prefs.getString('token');
     });
+  }
+
+// Logout User Function
+  Future<bool> logoutUser() async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.clear();
   }
 
   @override
@@ -34,7 +41,18 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(),
-      child: Center(child: Text(_token ?? '')),
+      child: Center(
+          child: TextButton(
+        onPressed: () async {
+          if (await logoutUser()) {
+            print("Logout successful");
+          }
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (Route route) => false);
+        },
+        child: Text("Logout"),
+      )),
     );
   }
 }

@@ -41,6 +41,8 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   modal_progress_hud: ^0.1.3
   shared_preferences: ^2.0.17
+  skeleton: ^0.9.284
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
