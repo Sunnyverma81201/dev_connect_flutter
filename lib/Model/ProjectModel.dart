@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:dev_connect/Model/TechModel.dart';
 import 'package:dev_connect/Model/UserModel.dart';
 
 ProjectModel projectModelFromJson(String str) =>
@@ -26,9 +27,9 @@ class ProjectModel {
 
   String id;
   String name;
-  List<Tech>? tech;
+  List<Tech>? tech = [];
   String owner;
-  List<dynamic>? users;
+  List<dynamic>? users = [];
   String duration;
   DateTime createdAt;
   DateTime updatedAt;

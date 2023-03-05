@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'TechModel.dart';
+
 UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
 
 String userModelToJson(UserModel data) => json.encode(data.toJson());
@@ -32,9 +34,9 @@ class UserModel {
   String? token;
   String? location;
   String? img;
-  List<dynamic>? interest;
-  List<dynamic>? projects;
-  List<Tech>? tech;
+  List<dynamic>? interest = [];
+  List<dynamic>? projects = [];
+  List<Tech>? tech = [];
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -74,30 +76,6 @@ class UserModel {
         "tech": List<dynamic>.from(tech!.map((x) => x.toJson())),
         "createdAt": createdAt!.toIso8601String(),
         "updatedAt": updatedAt!.toIso8601String(),
-      };
-}
-
-class Tech {
-  Tech({
-    required this.name,
-    required this.score,
-    required this.id,
-  });
-
-  String name;
-  int score;
-  String id;
-
-  factory Tech.fromJson(Map<String, dynamic> json) => Tech(
-        name: json["name"],
-        score: json["score"],
-        id: json["_id"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "score": score,
-        "_id": id,
       };
 }
 

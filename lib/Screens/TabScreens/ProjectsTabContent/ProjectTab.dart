@@ -10,11 +10,18 @@ class ProjectTab extends StatefulWidget {
 }
 
 class _ProjectTabState extends State<ProjectTab> {
+  Future<void> _getProjects() async {
+    // var projectsData = await
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getProjects();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(),
-      child: Center(child: Text("Project Tab")),
-    );
+    return Container();
   }
 }

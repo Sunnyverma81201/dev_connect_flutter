@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dev_connect/Model/ProjectModel.dart';
+import 'package:dev_connect/Model/TechModel.dart';
 import 'package:dev_connect/Model/UserModel.dart';
 import 'package:dev_connect/Screens/AuthenticationScreens/LoginScreen.dart';
 import 'package:dev_connect/Services/UserServices.dart';
@@ -22,8 +23,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   bool _isLoading = true;
 
   var _firstName, _lastName, _email, _location, _img;
-  List<String>? _interests;
-  List<ProjectModel>? _projects;
+  List<String>? _interests = [];
+  List<ProjectModel>? _projects = [];
   List<Tech> _techs = [];
   DateTime _createdAt = DateTime.now(), _updatedAt = DateTime.now();
 
@@ -49,7 +50,6 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       _interests = prefs.getStringList('interests');
       // _projects
       _projects = projectsData!;
-      print("$_projects");
       // _techs
       for (var tech in JsonDecoder().convert(prefs.getString('tech')!)) {
         _techs.add(
@@ -222,12 +222,26 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                           Wrap(
                             spacing: 4,
                             runSpacing: 4,
-                            children: List.generate(_techs.length, (tech) {
-                              return Chip(
-                                label: Text(_techs[tech].name),
-                                avatar: Text(_techs[tech].score.toString()),
-                              );
-                            }),
+                            children: _techs != null
+                                ? _techs.isNotEmpty
+                                    ? List.generate(_techs.length, (tech) {
+                                        return Chip(
+                                          label: Text(_techs[tech].name),
+                                          avatar: Text(
+                                              _techs[tech].score.toString()),
+                                        );
+                                      })
+                                    : [
+                                        const Center(
+                                            child: Text(
+                                          "You have not shown interest in any tech yet",
+                                        ))
+                                      ]
+                                : [
+                                    const Center(
+                                        child:
+                                            Text("Unable to Fetch Interests"))
+                                  ],
                           )
                         ],
                       ),
@@ -253,11 +267,25 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                           SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children:
-                                    List.generate(_projects!.length, (project) {
-                                  return ProjectCard(
-                                      projectModel: _projects![project]);
-                                }),
+                                children: _projects != null
+                                    ? _projects!.isNotEmpty
+                                        ? List.generate(_projects!.length,
+                                            (project) {
+                                            return ProjectCard(
+                                                projectModel:
+                                                    _projects![project]);
+                                          })
+                                        : [
+                                            const Center(
+                                                child: Text(
+                                              "No Projects created or joined yet",
+                                            ))
+                                          ]
+                                    : [
+                                        const Center(
+                                            child: Text(
+                                                "Unable to Fetch Projects"))
+                                      ],
                               ))
                         ],
                       ),

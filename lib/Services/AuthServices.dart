@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dev_connect/Model/TechModel.dart';
 import 'package:dev_connect/Model/UserModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -44,6 +45,20 @@ class AuthService {
     var response = await client.post(uri, headers: reqHeaders, body: reqBody);
     if (response.statusCode == 200) {
       return loginUser(email, password);
+    }
+  }
+
+  // Service to retrieve all the techs on the platform with out user token using HOME CONTROLLER
+  Future<List<Tech>?> getAllTechs() async {
+    var client = http.Client();
+
+    var uri = Uri.parse("${dotenv.env["BACKEND"]!}home/interests");
+    Map<String, String> reqHeaders = {"Content-Type": "application/json"};
+
+    var response = await client.get(uri);
+
+    if (response.statusCode == 200) {
+      return techFromJson(response.body);
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dev_connect/Screens/AuthenticationScreens/LoginScreen.dart';
+import 'package:dev_connect/Screens/AuthenticationScreens/SelectTechScreen.dart';
 import 'package:dev_connect/Screens/TabScreens/TabsScreen.dart';
 import 'package:dev_connect/Services/AuthServices.dart';
 import 'package:flutter/material.dart';
@@ -132,7 +133,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const TabsScreen()));
+                              builder: (context) => const SelectTechScreen()));
                     } else {
                       print("SignUp Error");
                     }
@@ -144,12 +145,21 @@ class _SignupScreenState extends State<SignupScreen> {
                     width: 220,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 15),
-                    child: const Center(
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(color: Colors.white, fontSize: 18.0),
-                        textAlign: TextAlign.center,
-                      ),
+                    child: Row(
+                      children: const [
+                        Text(
+                          'Lets Start',
+                          style: TextStyle(color: Colors.white, fontSize: 18.0),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Icon(
+                          Icons.east,
+                          color: Colors.white,
+                        )
+                      ],
                     ),
                   )),
               Row(
